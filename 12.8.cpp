@@ -78,7 +78,7 @@ class HourlyEmployee : public Employee
         return hour_rate * hours_worked;
     }
     virtual string getContract(){
-        return "h";
+        return "H";
     }
     virtual int getHourlyRate(){
         return hour_rate;
@@ -104,7 +104,7 @@ class SalaryEmployee : public Employee
         return monthly_salary;
     }
     virtual string getContract(){
-        return "s";
+        return "S";
     }
 };
 
@@ -127,7 +127,7 @@ class CommissionEmployee : public SalaryEmployee
         return monthly_salary + commission;
     }
     virtual string getContract(){
-        return "c";
+        return "C";
     }
     virtual int getCommission(){
         return commission;
@@ -169,6 +169,7 @@ public:
             cout << "(0) Lopeta" <<endl;
             cout << "Valitse toiminto: ";
             cin >> value;
+            cin.ignore();
             cout << endl;
             switch (value) 
             {
@@ -214,14 +215,11 @@ public:
             //getline (cin,valueS);
             //value = stoi(valueS);
             cin >> value;
-            cout << "Value " << value << endl;
+            cin.ignore();
             switch (value) 
             {
                 case 1:
-                    cout << 1 << endl;
-                    cout << 2 << endl;
                     InsertMontly();
-                    cout << 3 << endl;
                     break;
                 case 2:
                     InsertHourly();
@@ -247,13 +245,8 @@ public:
 
         cout << "Anna työntekijän nimi: ";
         getline (cin,name);
-        cin.ignore();
-        cin.clear();
         cout << "Anna kuukausipalkka: ";
         getline (cin,salary);
-        cin.ignore();
-        cin.clear();
-        cout << "5 " << name << salary << endl;
         employees.push_back(new SalaryEmployee(id,name,stoi(salary)));
         id++;
     }
@@ -300,16 +293,15 @@ public:
         for(int i = 0; i < employees.size(); i++)
         {
             vector<string> data = {to_string(employees[i]->id),employees[i]->name,employees[i]->getContract()};
-            cout << "Contract is " << employees[i]->getContract() << endl;
-            if(employees[i]->getContract() == "s"){
+            if(employees[i]->getContract() == "S"){
                 data.push_back(to_string(employees[i]->CalculateSalary()));
             }
-            if(employees[i]->getContract() == "h"){
+            if(employees[i]->getContract() == "H"){
                 data.push_back(to_string(employees[i]->getHourlyRate()));
                 data.push_back(to_string(employees[i]->getHoursWorked()));
             }
-            if(employees[i]->getContract() == "c"){
-                data.push_back(to_string(employees[i]->CalculateSalary()));
+            if(employees[i]->getContract() == "C"){
+                data.push_back(to_string(employees[i]->CalculateSalary() - employees[i]->getCommission()));
                 data.push_back(to_string(employees[i]->getCommission()));
             }
             string line = myjoin(data,',');
@@ -344,20 +336,20 @@ public:
             char sopimus = data[2][0];
             switch (sopimus)
             {
-                case 's':
+                case 'S':
                 {
                     int payment = stoi(data[3]);
                     employees.push_back(new SalaryEmployee(id,nimi,payment));
                 }
                 break;
-                case 'c':
+                case 'C':
                 {
                     int payment2 = stoi(data[3]);
                     int commission = stoi(data[4]);
                     employees.push_back(new CommissionEmployee(id,nimi,payment2,commission));
                 }
                 break;
-                case 'h':
+                case 'H':
                 {
                     int hour_rate = stoi(data[3]);
                     int hours_worked = stoi(data[4]);
